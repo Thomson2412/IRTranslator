@@ -9,11 +9,9 @@ const uint16_t recvPin = D5;
 const uint16_t irLedPin = D2;
 
 const uint32_t baudRate = 9600;
-const uint16_t captureBufferSize = 1024;
-const uint8_t timeout = 50;
 
 IRsend irsend(irLedPin);
-IRrecv irrecv(recvPin, captureBufferSize, timeout, false);
+IRrecv irrecv(recvPin);
 
 decode_results results;
 uint64_t sendData;
@@ -35,6 +33,7 @@ void loop(){
     if (irrecv.decode(&results)) {
         success = true;
         decode_type_t protocol = results.decode_type;
+        // Serial.println(resultToSourceCode(&results));
         // Only act on Sony protocol
         if (protocol == decode_type_t::SONY) {
             uint64_t value = results.value;
@@ -56,6 +55,7 @@ void loop(){
                     success = false;
             }
             if(success) {
+                // Serial.println(sendData, HEX);
                 irsend.sendNEC(sendData);
             }
         }
