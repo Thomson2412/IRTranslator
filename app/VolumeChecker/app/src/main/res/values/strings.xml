@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">ActionObserver</string>
+    <string name="title_activity_main">Action Observer</string>
+
+    <!-- Error messages -->
+    <string name="error_fragment_message">An error occurred</string>
+
+
+    <string name="notification_title">ActionObserver</string>
+    <string name="notification_message">Checking events</string>
+    <string name="ticker_text">ActionObserver</string>
+</resources>

@@ -1,0 +1,8 @@
+<resources>
+
+    <style name="Theme.VolumeChecker" parent="@style/Theme.Leanback" />
+
+    <style name="Theme.VolumeChecker.Launcher">
+        <item name="android:windowBackground">@drawable/best</item>
+    </style>
+</resources>
