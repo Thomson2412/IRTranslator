@@ -1,11 +1,11 @@
 package com.soloheisbeer.volumechecker
 
+
 import android.app.*
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.IBinder
 import android.util.Log
-import android.widget.Toast
 
 
 class ActionService : Service() {

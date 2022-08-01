@@ -9,7 +9,7 @@ const uint32_t baudRate = 115200;
 void WiFiConnected(){
     ControlServer::startServer();
     IRController::initSend();
-    IRController::startIRTranslator();
+//    IRController::startIRTranslator();
 }
 
 void setup(){

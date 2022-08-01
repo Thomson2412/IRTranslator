@@ -53,31 +53,31 @@ void ControlServer::handleRoot() {
 }
 
 void ControlServer::handlePowerOn() {
-    Serial.println("handlePowerOn");
+//    Serial.println("handlePowerOn");
     controlWebserver.send(200);
     IRController::sendIRPowerOn();
 }
 
 void ControlServer::handlePowerOff() {
-    Serial.println("handlePowerOff");
+//    Serial.println("handlePowerOff");
     controlWebserver.send(200);
     IRController::sendIRPowerOff();
 }
 
 void ControlServer::handleVolumeUp() {
-    Serial.println("handleVolumeUp");
+//    Serial.println("handleVolumeUp");
     controlWebserver.send(200);
     IRController::sendIRVolumeUp();
 }
 
 void ControlServer::handleVolumeDown() {
-    Serial.println("handleVolumeDown");
+//    Serial.println("handleVolumeDown");
     controlWebserver.send(200);
     IRController::sendIRVolumeDown();
 }
 
 void ControlServer::handleNotFound() {
-    Serial.println("handleNotFound");
+//    Serial.println("handleNotFound");
     controlWebserver.send(404, "text/plain", "404: Not found");
 }
 

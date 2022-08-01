@@ -15,6 +15,7 @@ uint64_t sendData;
 
 static bool needsProcessing = false;
 static bool canSend = false;
+static u_long previousSendTime = 0;
 
 void IRController::initSend(){
     irsend.begin();
@@ -83,9 +84,19 @@ void IRController::sendIRVolumeDown(){
 
 void IRController::sendIRCode(uint64_t code){
     if (canSend){
-        Serial.print("Send IR Code: ");
-        Serial.println(code);
+        u_long currentTime = millis();
+        u_long timeDifference = currentTime - previousSendTime;
+//        Serial.println(timeDifference);
+        if (timeDifference > 4000){
+//            Serial.println("Double duty");
+            irsend.sendNEC(code);
+        }
+
+        previousSendTime = currentTime;
+
         irsend.sendNEC(code);
+//        Serial.print("Send IR Code: ");
+//        Serial.println(code);
     }
 }
 

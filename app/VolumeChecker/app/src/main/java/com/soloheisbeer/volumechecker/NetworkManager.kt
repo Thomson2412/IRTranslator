@@ -13,7 +13,7 @@ import java.util.concurrent.Executors
 
 
 class NetworkManager() {
-    private var espBaseUrl = "http://192.168.31.68/"
+    private var espBaseUrl = "http://192.168.178.87/"
     val executor: ExecutorService = Executors.newSingleThreadExecutor()
 
     fun powerOn() {
