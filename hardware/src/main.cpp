@@ -35,5 +35,5 @@ void loop(){
         IRController::processIR();
     }
 
-    yield();  // Or delay(milliseconds); This ensures the ESP doesn't WDT reset.
+//    yield();  // Or delay(milliseconds); This ensures the ESP doesn't WDT reset.
 }

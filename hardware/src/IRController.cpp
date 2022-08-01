@@ -46,10 +46,10 @@ void IRController::processIR() {
 
             switch (value) {
                 case SonyVolUp:
-                    sendIRVolumeUp();
+                    sendIRVolumeUp(1);
                     break;
                 case SonyVolDown:
-                    sendIRVolumeDown();
+                    sendIRVolumeDown(1);
                     break;
                 case SonyRed:
                     sendIRPowerOff();
@@ -67,36 +67,44 @@ void IRController::processIR() {
 }
 
 void IRController::sendIRPowerOn(){
-    sendIRCode(HKOn);
+    sendIRCode(HKOn, false, 1);
 }
 
 void IRController::sendIRPowerOff(){
-    sendIRCode(HKOff);
+    sendIRCode(HKOff, false, 1);
 }
 
-void IRController::sendIRVolumeUp(){
-    sendIRCode(HKVolUp);
+void IRController::sendIRVolumeUp(int amount){
+    sendIRCode(HKVolUp, true, amount );
 }
 
-void IRController::sendIRVolumeDown(){
-    sendIRCode(HKVolDown);
+void IRController::sendIRVolumeDown(int amount){
+    sendIRCode(HKVolDown, true, amount);
 }
 
-void IRController::sendIRCode(uint64_t code){
+void IRController::sendIRCode(uint64_t code, bool doubleDuty, int amount){
     if (canSend){
         u_long currentTime = millis();
         u_long timeDifference = currentTime - previousSendTime;
 //        Serial.println(timeDifference);
-        if (timeDifference > 4000){
+        if (doubleDuty && timeDifference > 4000){
 //            Serial.println("Double duty");
             irsend.sendNEC(code);
+            delay(40);
+//            amount = amount + 1;
         }
 
         previousSendTime = currentTime;
 
-        irsend.sendNEC(code);
+
+        for(int i = 0; i < amount; i++) {
+            irsend.sendNEC(code);
+            delay(40);
+        }
 //        Serial.print("Send IR Code: ");
 //        Serial.println(code);
+
+//        irsend.sendNEC(code, kNECBits, amount);
     }
 }
 

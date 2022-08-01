@@ -1,5 +1,6 @@
 #include "ControlServer.h"
 #include "IRController.h"
+#include <cctype>
 
 ESP8266WebServer controlWebserver(80);
 
@@ -67,13 +68,25 @@ void ControlServer::handlePowerOff() {
 void ControlServer::handleVolumeUp() {
 //    Serial.println("handleVolumeUp");
     controlWebserver.send(200);
-    IRController::sendIRVolumeUp();
+    int amount = 1;
+    String amountArg = controlWebserver.arg("amount");
+    int amountConv = amountArg.toInt();
+    if (amountArg != "" && amountConv != 0){
+        amount = amountConv;
+    }
+    IRController::sendIRVolumeUp(amount);
 }
 
 void ControlServer::handleVolumeDown() {
 //    Serial.println("handleVolumeDown");
     controlWebserver.send(200);
-    IRController::sendIRVolumeDown();
+    int amount = 1;
+    String amountArg = controlWebserver.arg("amount");
+    int amountConv = amountArg.toInt();
+    if (amountArg != "" && amountConv != 0){
+        amount = amountConv;
+    }
+    IRController::sendIRVolumeDown(amount);
 }
 
 void ControlServer::handleNotFound() {

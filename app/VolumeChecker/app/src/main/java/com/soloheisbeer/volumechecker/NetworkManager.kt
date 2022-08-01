@@ -23,12 +23,12 @@ class NetworkManager() {
         sendPostRequest("poweroff")
 
     }
-    fun volumeUp() {
-        sendPostRequest("volumeup")
+    fun volumeUp(amount: Int) {
+        sendPostRequest("volumeup?amount=$amount")
 
     }
-    fun volumeDown() {
-        sendPostRequest("volumedown")
+    fun volumeDown(amount: Int) {
+        sendPostRequest("volumedown?amount=$amount")
     }
 
     private fun sendPostRequest(urlPart: String){

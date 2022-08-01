@@ -19,9 +19,9 @@ public:
     static bool needsToProcess();
     static void sendIRPowerOn();
     static void sendIRPowerOff();
-    static void sendIRVolumeUp();
-    static void sendIRVolumeDown();
-    static void sendIRCode(uint64_t code);
+    static void sendIRVolumeUp(int amount);
+    static void sendIRVolumeDown(int amount);
+    static void sendIRCode(uint64_t code, bool doubleDuty, int amount);
 };
 
 

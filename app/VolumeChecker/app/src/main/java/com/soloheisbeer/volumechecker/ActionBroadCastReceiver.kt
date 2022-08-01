@@ -28,11 +28,11 @@ class ActionBroadCastReceiver(private val networkManager: NetworkManager) : Broa
             if (newVolume > oldVolume || newVolume == 100) {
                 Log.d("ACTION:", "UP")
 //                Toast.makeText(context, "Up", Toast.LENGTH_SHORT).show()
-                networkManager.volumeUp()
+                networkManager.volumeUp(newVolume - oldVolume)
             } else if (newVolume < oldVolume || newVolume == 0) {
                 Log.d("ACTION:", "DOWN")
 //                Toast.makeText(context, "Down", Toast.LENGTH_SHORT).show()
-                networkManager.volumeDown()
+                networkManager.volumeDown(oldVolume - newVolume)
             }
         }
 
