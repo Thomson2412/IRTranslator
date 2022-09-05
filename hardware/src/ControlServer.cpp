@@ -16,6 +16,7 @@ void ControlServer::startServer(){
     controlWebserver.on("/poweroff", HTTP_POST, handlePowerOff);
     controlWebserver.on("/volumeup", HTTP_POST, handleVolumeUp);
     controlWebserver.on("/volumedown", HTTP_POST, handleVolumeDown);
+    controlWebserver.on("/mute", HTTP_POST, handleVolumeMute);
 
     controlWebserver.onNotFound(handleNotFound);
 
@@ -87,6 +88,12 @@ void ControlServer::handleVolumeDown() {
         amount = amountConv;
     }
     IRController::sendIRVolumeDown(amount);
+}
+
+void ControlServer::handleVolumeMute() {
+//    Serial.println("Mute");
+    controlWebserver.send(200);
+    IRController::sendIRVolumeMute();
 }
 
 void ControlServer::handleNotFound() {

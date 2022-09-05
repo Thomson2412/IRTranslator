@@ -21,6 +21,7 @@ private:
     static void handlePowerOff();
     static void handleVolumeUp();
     static void handleVolumeDown();
+    static void handleVolumeMute();
 
     static void handleNotFound();
 };

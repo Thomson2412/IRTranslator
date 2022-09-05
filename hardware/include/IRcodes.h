@@ -11,6 +11,7 @@ const uint64_t SonyGreen = 0x32E9;
 
 const uint64_t HKVolUp = 0x10EE31C;
 const uint64_t HKVolDown = 0x10E13EC;
+const uint64_t HKVolMute = 0x10E837C;
 const uint64_t HKOff = 0x10EF906;
 const uint64_t HKOn = 0x10E03FC;
 

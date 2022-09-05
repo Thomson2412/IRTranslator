@@ -8,6 +8,7 @@
 #include <IRsend.h>
 #include <IRrecv.h>
 #include <IRremoteESP8266.h>
+#include "IRutils.h"
 #include <IRcodes.h>
 
 class IRController {
@@ -21,7 +22,8 @@ public:
     static void sendIRPowerOff();
     static void sendIRVolumeUp(int amount);
     static void sendIRVolumeDown(int amount);
-    static void sendIRCode(uint64_t code, bool doubleDuty, int amount);
+    static void sendIRVolumeMute();
+    static void sendIRCode(uint64_t code, bool doubleDuty, int amount, int delay_ms);
 };
 
 
