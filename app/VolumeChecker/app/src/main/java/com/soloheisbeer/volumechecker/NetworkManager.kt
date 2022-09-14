@@ -14,14 +14,17 @@ class NetworkManager() {
     fun powerOn() {
         sendPostRequest("poweron")
     }
+
     fun powerOff() {
         sendPostRequest("poweroff")
 
     }
+
     fun volumeUp(amount: Int) {
         sendPostRequest("volumeup?amount=$amount")
 
     }
+
     fun volumeDown(amount: Int) {
         sendPostRequest("volumedown?amount=$amount")
     }
@@ -30,7 +33,7 @@ class NetworkManager() {
         sendPostRequest("mute")
     }
 
-    private fun sendPostRequest(urlPart: String){
+    private fun sendPostRequest(urlPart: String) {
         executor.execute {
             try {
                 val postUrl = URL(espBaseUrl + urlPart)

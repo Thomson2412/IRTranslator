@@ -36,22 +36,22 @@ class ActionBroadCastReceiver(
             }
 
             if (newVolume > oldVolume || newVolume == 100) {
-//                Log.d("ACTION:", "UP")
+                Log.d("ACTION:", "UP")
 //                Toast.makeText(context, "Up", Toast.LENGTH_SHORT).show()
                 networkManager.volumeUp(newVolume - oldVolume)
             } else if (newVolume < oldVolume || newVolume == 0) {
-//                Log.d("ACTION:", "DOWN")
+                Log.d("ACTION:", "DOWN")
 //                Toast.makeText(context, "Down", Toast.LENGTH_SHORT).show()
                 networkManager.volumeDown(oldVolume - newVolume)
             }
         }
 
         if (intent?.action == Intent.ACTION_SCREEN_ON) {
-//            Log.d("ACTION", "ON")
+            Log.d("ACTION", "ON")
 //            Toast.makeText(context, "On", Toast.LENGTH_SHORT).show()
             networkManager.powerOn()
         } else if (intent?.action == Intent.ACTION_SCREEN_OFF) {
-//            Log.d("ACTION", "OFF")
+            Log.d("ACTION", "OFF")
 //            Toast.makeText(context, "Off", Toast.LENGTH_SHORT).show()
             networkManager.powerOff()
         }

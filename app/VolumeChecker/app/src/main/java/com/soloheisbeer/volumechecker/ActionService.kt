@@ -2,12 +2,11 @@ package com.soloheisbeer.volumechecker
 
 
 import android.app.*
-import android.content.BroadcastReceiver
-import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.media.AudioManager
 import android.os.IBinder
+import android.os.PowerManager
 import android.util.Log
 
 
@@ -23,8 +22,16 @@ class ActionService : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Log.d(packageName,"START SERVICE")
+
+        val networkManager = NetworkManager()
         val audioManager = getSystemService(AudioManager::class.java)
-        registerReceiver(audioManager, NetworkManager())
+        val powerManager = getSystemService(PowerManager::class.java)
+
+        if (powerManager.isInteractive){
+            networkManager.powerOn()
+        }
+
+        registerReceiver(audioManager, networkManager)
 
         startForeground(NOTIFICATION_ID, createNotification())
 
