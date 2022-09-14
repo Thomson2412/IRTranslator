@@ -23,6 +23,8 @@ class ActionService : Service() {
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Log.d(packageName,"START SERVICE")
 
+        unregisterReceiver()
+
         val networkManager = NetworkManager()
         val audioManager = getSystemService(AudioManager::class.java)
         val powerManager = getSystemService(PowerManager::class.java)
