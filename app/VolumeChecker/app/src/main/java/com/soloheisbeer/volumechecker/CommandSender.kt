@@ -7,7 +7,7 @@ import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
 
-class NetworkManager() {
+class CommandSender() {
     private var espBaseUrl = "http://192.168.178.87/"
     private val executor: ExecutorService = Executors.newSingleThreadExecutor()
 
