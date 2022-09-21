@@ -24,12 +24,13 @@
         android:usesCleartextTraffic="true">
 
         <service
-            android:name=".ActionService"
+            android:name="com.soloheisbeer.volumechecker.ActionService"
             android:exported="false" />
 
-        <receiver android:name=".BootBroadCastReceiver"
-            android:exported="true"
-            android:permission="android.permission.RECEIVE_BOOT_COMPLETED">
+        <receiver
+            android:name="com.soloheisbeer.volumechecker.BootBroadCastReceiver"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>

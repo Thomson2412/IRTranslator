@@ -13,9 +13,8 @@ class MainActivity : Activity() {
         setTheme(R.style.Theme_VolumeChecker)
         setContentView(R.layout.activity_main)
 
-        val intent = Intent(applicationContext, ActionService::class.java)
-        intent.setPackage(packageName)
-        applicationContext.startForegroundService(intent)
+        val startServiceIntent = Intent(applicationContext, ActionService::class.java)
+        applicationContext.startForegroundService(startServiceIntent)
 
         val handler = Handler();
         handler.postDelayed(Runnable() {
