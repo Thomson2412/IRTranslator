@@ -7,12 +7,12 @@ import android.media.AudioManager
 import android.net.ConnectivityManager
 import android.net.ConnectivityManager.NetworkCallback
 import android.net.Network
+import android.os.PowerManager
 import android.util.Log
 
 
 class ActionBroadCastReceiver(
     private val audioManager: AudioManager,
-    private val connectivityManager: ConnectivityManager,
     private val commandSender: CommandSender) : BroadcastReceiver() {
 
     companion object {
@@ -22,17 +22,6 @@ class ActionBroadCastReceiver(
         const val EXTRA_VOLUME_STREAM_TYPE = "android.media.EXTRA_VOLUME_STREAM_TYPE"
     }
 
-    val networkCallback: NetworkCallback = object : NetworkCallback() {
-        override fun onAvailable(network: Network) {
-            super.onAvailable(network)
-            if (turnOnWhenConnected){
-                commandSender.powerOn()
-                turnOnWhenConnected = false
-            }
-        }
-    }
-
-    private var turnOnWhenConnected = false
     private var isMute = audioManager.isStreamMute(AudioManager.STREAM_MUSIC)
 
 
@@ -61,16 +50,10 @@ class ActionBroadCastReceiver(
 
         if (intent?.action == Intent.ACTION_SCREEN_ON) {
             Log.d("ACTION", "ON")
-            if (connectivityManager.isDefaultNetworkActive) {
-                commandSender.powerOn()
-            } else{
-                turnOnWhenConnected = true
-            }
-
+            commandSender.powerOn()
         } else if (intent?.action == Intent.ACTION_SCREEN_OFF) {
             Log.d("ACTION", "OFF")
             commandSender.powerOff()
-            turnOnWhenConnected = false
         }
     }
 }

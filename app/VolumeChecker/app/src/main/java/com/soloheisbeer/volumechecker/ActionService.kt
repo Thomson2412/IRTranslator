@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import android.media.AudioManager
 import android.net.ConnectivityManager
 import android.net.ConnectivityManager.NetworkCallback
+import android.net.Network
 import android.os.IBinder
 import android.os.PowerManager
 import android.util.Log
@@ -20,24 +21,38 @@ class ActionService : Service() {
         const val CHANNEL_NAME = "ActionObserver"
     }
 
+    private var audioManager: AudioManager? = null
+    private var powerManager: PowerManager? = null
+    private var connectivityManager: ConnectivityManager? = null
+
+
     private val commandSender: CommandSender = CommandSender()
     private var actionBroadCastReceiver: ActionBroadCastReceiver? = null
 
+
+    private val networkCallback: NetworkCallback = object : NetworkCallback() {
+        override fun onAvailable(network: Network) {
+            super.onAvailable(network)
+            Log.d("STATE:", "Network connected")
+            if (powerManager?.isInteractive == true)
+                commandSender.powerOn()
+        }
+    }
+
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Log.d(packageName,"START SERVICE")
+        audioManager = getSystemService(AudioManager::class.java)
+        powerManager = getSystemService(PowerManager::class.java)
+        connectivityManager = getSystemService(ConnectivityManager::class.java)
 
         unregisterReceiver()
 
-        val audioManager = getSystemService(AudioManager::class.java)
-        val powerManager = getSystemService(PowerManager::class.java)
-        val connectivityManager = getSystemService(ConnectivityManager::class.java)
-
-        if (powerManager.isInteractive){
+        if (powerManager?.isInteractive == true){
             commandSender.powerOn()
         }
 
-        registerReceiver(audioManager, connectivityManager, commandSender)
-        actionBroadCastReceiver?.let { registerNetworkCallback(it) }
+        audioManager?.let { registerReceiver(it, commandSender) }
+        connectivityManager?.registerDefaultNetworkCallback(networkCallback)
 
         startForeground(NOTIFICATION_ID, createNotification())
 
@@ -47,6 +62,7 @@ class ActionService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver()
+        connectivityManager?.unregisterNetworkCallback(networkCallback)
     }
 
     private fun createNotification(): Notification {
@@ -78,11 +94,9 @@ class ActionService : Service() {
     }
 
     private fun registerReceiver(audioManager: AudioManager,
-                                 connectivityManager: ConnectivityManager,
                                  commandSender: CommandSender) {
         actionBroadCastReceiver = ActionBroadCastReceiver(
             audioManager,
-            connectivityManager,
             commandSender)
         val filter = IntentFilter()
         filter.addAction(ActionBroadCastReceiver.SCREEN_ON)
@@ -98,11 +112,6 @@ class ActionService : Service() {
             applicationContext.unregisterReceiver(actionBroadCastReceiver!!)
             actionBroadCastReceiver = null
         }
-    }
-
-    private fun registerNetworkCallback(actionBroadCastReceiver: ActionBroadCastReceiver) {
-        val connectivityManager = getSystemService(ConnectivityManager::class.java)
-        connectivityManager.registerDefaultNetworkCallback(actionBroadCastReceiver.networkCallback)
     }
 
     override fun onBind(intent: Intent?): IBinder? {
