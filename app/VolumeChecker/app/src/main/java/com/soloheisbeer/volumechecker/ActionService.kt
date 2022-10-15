@@ -4,6 +4,7 @@ package com.soloheisbeer.volumechecker
 import android.app.*
 import android.content.Intent
 import android.content.IntentFilter
+import android.hardware.display.DisplayManager
 import android.media.AudioManager
 import android.net.ConnectivityManager
 import android.net.ConnectivityManager.NetworkCallback
@@ -11,48 +12,53 @@ import android.net.Network
 import android.os.IBinder
 import android.os.PowerManager
 import android.util.Log
+import android.view.Display
 
 
 class ActionService : Service() {
 
-    companion object{
+    companion object {
         const val NOTIFICATION_ID = 101
         const val CHANNEL_ID = "ActionObserver"
         const val CHANNEL_NAME = "ActionObserver"
     }
 
-    private var audioManager: AudioManager? = null
-    private var powerManager: PowerManager? = null
-    private var connectivityManager: ConnectivityManager? = null
+    private lateinit var audioManager: AudioManager
+    private lateinit var powerManager: PowerManager
+    private lateinit var displayManager: DisplayManager
+    private lateinit var connectivityManager: ConnectivityManager
 
 
     private val commandSender: CommandSender = CommandSender()
     private var actionBroadCastReceiver: ActionBroadCastReceiver? = null
 
-
     private val networkCallback: NetworkCallback = object : NetworkCallback() {
         override fun onAvailable(network: Network) {
             super.onAvailable(network)
             Log.d("STATE:", "Network connected")
-            if (powerManager?.isInteractive == true)
+            if (powerManager.isInteractive && displayManager.displays[0].state == Display.STATE_ON) {
                 commandSender.powerOn()
+            }
         }
     }
 
+
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        Log.d(packageName,"START SERVICE")
+        Log.d(packageName, "START SERVICE")
+
         audioManager = getSystemService(AudioManager::class.java)
         powerManager = getSystemService(PowerManager::class.java)
+        displayManager = getSystemService(DisplayManager::class.java)
         connectivityManager = getSystemService(ConnectivityManager::class.java)
 
         unregisterReceiver()
 
-        if (powerManager?.isInteractive == true){
+        if (powerManager.isInteractive && displayManager.displays[0].state == Display.STATE_ON) {
             commandSender.powerOn()
         }
 
-        audioManager?.let { registerReceiver(it, commandSender) }
-        connectivityManager?.registerDefaultNetworkCallback(networkCallback)
+        registerReceiver(audioManager, displayManager, commandSender)
+        connectivityManager.registerDefaultNetworkCallback(networkCallback)
 
         startForeground(NOTIFICATION_ID, createNotification())
 
@@ -62,7 +68,7 @@ class ActionService : Service() {
     override fun onDestroy() {
         super.onDestroy()
         unregisterReceiver()
-        connectivityManager?.unregisterNetworkCallback(networkCallback)
+        connectivityManager.unregisterNetworkCallback(networkCallback)
     }
 
     private fun createNotification(): Notification {
@@ -93,11 +99,16 @@ class ActionService : Service() {
             .build()
     }
 
-    private fun registerReceiver(audioManager: AudioManager,
-                                 commandSender: CommandSender) {
+    private fun registerReceiver(
+        audioManager: AudioManager,
+        displayManager: DisplayManager,
+        commandSender: CommandSender
+    ) {
         actionBroadCastReceiver = ActionBroadCastReceiver(
             audioManager,
-            commandSender)
+            displayManager,
+            commandSender
+        )
         val filter = IntentFilter()
         filter.addAction(ActionBroadCastReceiver.SCREEN_ON)
         filter.addAction(ActionBroadCastReceiver.SCREEN_OFF)

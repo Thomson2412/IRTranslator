@@ -3,16 +3,19 @@ package com.soloheisbeer.volumechecker
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.hardware.display.DisplayManager
 import android.media.AudioManager
 import android.net.ConnectivityManager
 import android.net.ConnectivityManager.NetworkCallback
 import android.net.Network
 import android.os.PowerManager
 import android.util.Log
+import android.view.Display
 
 
 class ActionBroadCastReceiver(
     private val audioManager: AudioManager,
+    private val displayManager: DisplayManager,
     private val commandSender: CommandSender) : BroadcastReceiver() {
 
     companion object {
@@ -48,7 +51,7 @@ class ActionBroadCastReceiver(
             }
         }
 
-        if (intent?.action == Intent.ACTION_SCREEN_ON) {
+        if (intent?.action == Intent.ACTION_SCREEN_ON && displayManager.displays[0].state == Display.STATE_ON) {
             Log.d("ACTION", "ON")
             commandSender.powerOn()
         } else if (intent?.action == Intent.ACTION_SCREEN_OFF) {
