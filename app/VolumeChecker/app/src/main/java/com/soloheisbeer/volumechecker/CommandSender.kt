@@ -8,7 +8,7 @@ import java.util.concurrent.Executors
 
 
 class CommandSender() {
-    private var espBaseUrl = "http://192.168.178.87/"
+    private var espBaseUrl = "http://192.168.178.145/"
     private val executor: ExecutorService = Executors.newSingleThreadExecutor()
 
     fun powerOn() {
