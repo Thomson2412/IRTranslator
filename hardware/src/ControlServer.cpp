@@ -7,10 +7,12 @@ ESP8266WebServer controlWebserver(80);
 static bool needsProcessing = false;
 
 
-void ControlServer::startServer(){
+void ControlServer::startServer() {
     Serial.println("Starting ControlServer");
 
     controlWebserver.on("/", HTTP_GET, handleRoot);
+
+//    controlWebserver.on("/action", HTTP_POST, handleAction);
 
     controlWebserver.on("/poweron", HTTP_POST, handlePowerOn);
     controlWebserver.on("/poweroff", HTTP_POST, handlePowerOff);
@@ -37,21 +39,34 @@ void ControlServer::processRequest() {
 void ControlServer::handleRoot() {
     Serial.println("handleControlRoot");
     controlWebserver.send(200, "text/html",
-                         R"(
+                          R"(
 <h1>Hello!</h1>
-<form action="/poweron" method="POST">
-    <input type="submit" value=" Power on">
-</form>
-<form action="/poweroff" method="POST">
-    <input type="submit" value="Power off">
-</form>
-<form action="/volumeup" method="POST">
-    <input type="submit" value="Volume up">
-</form>
-<form action="/volumedown" method="POST">
-    <input type="submit" value="Volume down">
-</form>
 )");
+}
+
+void ControlServer::handleAction() {
+    if (controlWebserver.hasArg("action")) {
+        String action = controlWebserver.arg("action");
+
+        if (action.equals("poweron")) {
+            handlePowerOn();
+        } else if (action.equals("poweroff")) {
+            handlePowerOff();
+        } else if (action.equals("volumeup")) {
+            handleVolumeUp();
+        } else if (action.equals("volumedown")) {
+            handleVolumeDown();
+        } else if (action.equals("mute")) {
+            handleVolumeMute();
+        } else {
+            controlWebserver.send(200, "text/plain", "Action value not understood");
+        }
+
+        controlWebserver.send(200);
+
+    } else {
+        controlWebserver.send(200, "text/plain", "Action param not received");
+    }
 }
 
 void ControlServer::handlePowerOn() {
@@ -70,10 +85,12 @@ void ControlServer::handleVolumeUp() {
 //    Serial.println("handleVolumeUp");
     controlWebserver.send(200);
     int amount = 1;
-    String amountArg = controlWebserver.arg("amount");
-    int amountConv = amountArg.toInt();
-    if (amountArg != "" && amountConv != 0){
-        amount = amountConv;
+    if (controlWebserver.hasArg("amount")) {
+        String amountArg = controlWebserver.arg("amount");
+        int amountConv = amountArg.toInt();
+        if (amountArg != "" && amountConv != 0) {
+            amount = amountConv;
+        }
     }
     IRController::sendIRVolumeUp(amount);
 }
@@ -82,10 +99,12 @@ void ControlServer::handleVolumeDown() {
 //    Serial.println("handleVolumeDown");
     controlWebserver.send(200);
     int amount = 1;
-    String amountArg = controlWebserver.arg("amount");
-    int amountConv = amountArg.toInt();
-    if (amountArg != "" && amountConv != 0){
-        amount = amountConv;
+    if (controlWebserver.hasArg("amount")) {
+        String amountArg = controlWebserver.arg("amount");
+        int amountConv = amountArg.toInt();
+        if (amountArg != "" && amountConv != 0) {
+            amount = amountConv;
+        }
     }
     IRController::sendIRVolumeDown(amount);
 }

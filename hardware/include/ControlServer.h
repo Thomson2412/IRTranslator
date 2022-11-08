@@ -17,6 +17,8 @@ public:
 
 private:
     static void handleRoot();
+    static void handleAction();
+
     static void handlePowerOn();
     static void handlePowerOff();
     static void handleVolumeUp();

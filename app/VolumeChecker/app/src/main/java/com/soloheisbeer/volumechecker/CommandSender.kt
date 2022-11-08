@@ -41,7 +41,7 @@ class CommandSender() {
                 connection.requestMethod = "POST"
                 connection.connect()
                 val responseCode = connection.responseCode
-                Log.d("NetworkManger", "$urlPart: $responseCode")
+                Log.d("NetworkManger", "$postUrl: $responseCode")
             } catch (e: Exception) {
                 e.printStackTrace()
             }
