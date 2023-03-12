@@ -4,6 +4,7 @@ import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 
 
 class MainActivity : Activity() {
@@ -16,11 +17,9 @@ class MainActivity : Activity() {
         val startServiceIntent = Intent(applicationContext, ActionService::class.java)
         applicationContext.startForegroundService(startServiceIntent)
 
-        val handler = Handler();
-        handler.postDelayed(Runnable() {
-            run() {
-                finish()
-            }
+        val handler = Handler(Looper.getMainLooper());
+        handler.postDelayed({
+            finish()
         }, 2000);
     }
 }

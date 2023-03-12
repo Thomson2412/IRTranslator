@@ -12,7 +12,6 @@ import android.net.Network
 import android.os.IBinder
 import android.os.PowerManager
 import android.util.Log
-import android.view.Display
 
 
 class ActionService : Service() {
@@ -23,11 +22,7 @@ class ActionService : Service() {
         const val CHANNEL_NAME = "ActionObserver"
     }
 
-    private lateinit var audioManager: AudioManager
-    private lateinit var powerManager: PowerManager
-    private lateinit var displayManager: DisplayManager
     private lateinit var connectivityManager: ConnectivityManager
-
 
     private val commandSender: CommandSender = CommandSender()
     private var actionBroadCastReceiver: ActionBroadCastReceiver? = null
@@ -36,7 +31,7 @@ class ActionService : Service() {
         override fun onAvailable(network: Network) {
             super.onAvailable(network)
             Log.d("STATE:", "Network connected")
-            if (powerManager.isInteractive && displayManager.displays[0].state == Display.STATE_ON) {
+            if (Utils.isScreenOn(applicationContext)) {
                 commandSender.powerOn()
             }
         }
@@ -46,18 +41,16 @@ class ActionService : Service() {
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         Log.d(packageName, "START SERVICE")
 
-        audioManager = getSystemService(AudioManager::class.java)
-        powerManager = getSystemService(PowerManager::class.java)
-        displayManager = getSystemService(DisplayManager::class.java)
-        connectivityManager = getSystemService(ConnectivityManager::class.java)
+        val audioManager = getSystemService(AudioManager::class.java)
+        val connectivityManager = getSystemService(ConnectivityManager::class.java)
 
         unregisterReceiver()
 
-        if (powerManager.isInteractive && displayManager.displays[0].state == Display.STATE_ON) {
+        if (Utils.isScreenOn(applicationContext)) {
             commandSender.powerOn()
         }
 
-        registerReceiver(audioManager, displayManager, commandSender)
+        registerReceiver(commandSender)
         connectivityManager.registerDefaultNetworkCallback(networkCallback)
 
         startForeground(NOTIFICATION_ID, createNotification())
@@ -99,16 +92,8 @@ class ActionService : Service() {
             .build()
     }
 
-    private fun registerReceiver(
-        audioManager: AudioManager,
-        displayManager: DisplayManager,
-        commandSender: CommandSender
-    ) {
-        actionBroadCastReceiver = ActionBroadCastReceiver(
-            audioManager,
-            displayManager,
-            commandSender
-        )
+    private fun registerReceiver(commandSender: CommandSender) {
+        actionBroadCastReceiver = ActionBroadCastReceiver(commandSender)
         val filter = IntentFilter()
         filter.addAction(ActionBroadCastReceiver.SCREEN_ON)
         filter.addAction(ActionBroadCastReceiver.SCREEN_OFF)

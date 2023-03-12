@@ -13,10 +13,7 @@ import android.util.Log
 import android.view.Display
 
 
-class ActionBroadCastReceiver(
-    private val audioManager: AudioManager,
-    private val displayManager: DisplayManager,
-    private val commandSender: CommandSender) : BroadcastReceiver() {
+class ActionBroadCastReceiver(private val commandSender: CommandSender) : BroadcastReceiver() {
 
     companion object {
         const val SCREEN_ON = "android.intent.action.SCREEN_ON"
@@ -25,16 +22,16 @@ class ActionBroadCastReceiver(
         const val EXTRA_VOLUME_STREAM_TYPE = "android.media.EXTRA_VOLUME_STREAM_TYPE"
     }
 
-    private var isMute = audioManager.isStreamMute(AudioManager.STREAM_MUSIC)
+    private var isMute = false
 
-
-    override fun onReceive(context: Context?, intent: Intent?) {
-        val streamType = intent?.getIntExtra(EXTRA_VOLUME_STREAM_TYPE, -1)
-        if (intent?.action == VOLUME_CHANGE_ACTION && streamType == AudioManager.STREAM_MUSIC) {
+    override fun onReceive(context: Context, intent: Intent) {
+        val streamType = intent.getIntExtra(EXTRA_VOLUME_STREAM_TYPE, -1)
+        if (intent.action == VOLUME_CHANGE_ACTION && streamType == AudioManager.STREAM_MUSIC) {
             val newVolume = intent.getIntExtra("android.media.EXTRA_VOLUME_STREAM_VALUE", -1)
             val oldVolume = intent.getIntExtra("android.media.EXTRA_PREV_VOLUME_STREAM_VALUE", -1)
 
             Log.d("ACTION:", "Change - old: $oldVolume - new: $newVolume")
+            val audioManager = context.getSystemService(AudioManager::class.java)
             val newMute = audioManager.isStreamMute(AudioManager.STREAM_MUSIC)
             if (isMute != newMute){
                 Log.d("ACTION:", "MUTE")
@@ -51,10 +48,10 @@ class ActionBroadCastReceiver(
             }
         }
 
-        if (intent?.action == Intent.ACTION_SCREEN_ON && displayManager.displays[0].state == Display.STATE_ON) {
+        if (intent.action == Intent.ACTION_SCREEN_ON && Utils.isScreenOn(context)) {
             Log.d("ACTION", "ON")
             commandSender.powerOn()
-        } else if (intent?.action == Intent.ACTION_SCREEN_OFF) {
+        } else if (intent.action == Intent.ACTION_SCREEN_OFF) {
             Log.d("ACTION", "OFF")
             commandSender.powerOff()
         }
